@@ -1,46 +1,71 @@
 import express from "express";
-
-let articlesInfo = [{
-    name: 'article-1',
-    upvotes: 0
-}, {
-    name: 'article-2',
-    upvotes: 0
-}, {
-    name: 'article-3',
-    upvotes: 0
-}]
+import { db, conectToDb } from './db.js'
 
 const app = express();
 
 // Middleware
 app.use(express.json())
 
+app.get("/api/articles/:name", async (req, res) => {
+    const { name } = req.params
+
+    const article = await db.collection('articles').findOne({ name });
+    if (article) {
+        res.json(article);
+    }
+    else {
+        res.send("ARTICLE NOT FOUND")
+    }
+})
+
 app.post("/hello", (req, res) => {
-    console.log(req.body)
     res.send(`Hello ${req.body.name}`);
 });
 
 app.get('/hello/:name/goodbye/:name_2', (req, res) => {
-    console.log(req);
     const name = req.params
     res.send(`Hello ${req.params.name}, Goodybe ${req.params.name_2}!`);
 })
 
-app.put("/api/articles/:name/upvote", (req, res) => {
-    console.log(req.params);
+app.put("/api/articles/:name/upvote", async (req, res) => {
     const { name } = req.params;
 
-    const article = articlesInfo.find(a => a.name === name);
+    await db.collection('articles').updateOne({name }, {
+        $inc: { upvotes: 1 }
+    })
+
+    const article = await db.collection('articles').findOne({name});
     if (article) {
-        article.upvotes += 1;
-        res.send(`The ${name }article now has ${article.upvotes} upvotes`)
+        res.json(article);
     }
     else {
         res.send(`The Article does not exist`)
     }
-})
+});
 
-app.listen(8000, () => {
-    console.log("Server is listening on port 8000");
+app.post("/api/articles/:name/comments", async (req, res) => {
+    console.log("COMMENT RECEIVED!")
+    
+    const { name } = req.params;
+    const { postedBy, text } = req.body;
+
+    await db.collection('articles').updateOne({name }, {
+        $push: { comments: { postedBy, text } }
+    })
+
+    const article = await db.collection('articles').findOne( {name} )
+
+    if (article) {
+        res.json(article)
+    }
+    else {
+        res.send("That article does not exist")
+    }
+
 })
+conectToDb(() => {
+    console.log("Successfully connected to Database")
+    app.listen(8000, () => {
+        console.log("Server is listening on port 8000");
+    })
+});
