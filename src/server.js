@@ -3,6 +3,8 @@ import admin from 'firebase-admin';
 import express from "express";
 import { db, conectToDb } from './db.js';
 
+import Article from './models/Article.js';
+
 const credentials = JSON.parse(
     fs.readFileSync('credentials.json')
 )
@@ -60,16 +62,7 @@ app.get("/api/articles/:name", async (req, res) => {
 app.get("/api/articles", async (req, res) => {
     console.log("ARTICLES LIST")
 
-    const articleList = await db.collection('articles').find({}, (error, data) => {
-        if (error) {
-            console.log(error)
-        }
-        else {
-            console.log(data)
-        }
-    })
-    console.log(articleList)
-    res.send(articleList)
+    // console.log(Article.find(1))
 })
 
 app.use((req, res, next) => {
