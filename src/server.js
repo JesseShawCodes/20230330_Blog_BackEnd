@@ -38,15 +38,10 @@ app.use(async (req, res, next) => {
 })
 
 app.get("/api/articles/:name", async (req, res) => {
-    console.log("eljlkj")
     const { name } = req.params;
     const { uid } = req.user;
-    console.log(`
-        ${req.params.name}
-    `)
 
     const article = await db.collection('articles').findOne({ name });
-    console.log(article)
     if (article) {
         // USer can only upvote article once
         const upvoteIds = article.upvoteIds || [];
@@ -60,9 +55,11 @@ app.get("/api/articles/:name", async (req, res) => {
 })
 
 app.get("/api/articles", async (req, res) => {
-    console.log("ARTICLES LIST")
+    console.log("----------")
 
-    // console.log(Article.find(1))
+    const articles = await Article.find()
+
+    res.send(articles)
 })
 
 app.use((req, res, next) => {

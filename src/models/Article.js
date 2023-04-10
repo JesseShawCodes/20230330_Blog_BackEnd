@@ -2,12 +2,10 @@ import mongoose from "mongoose";
 
 var ArticleSchema = new mongoose.Schema({
   name: {
-    type: String,
-    index: true
-  },
+    type: String  
+},
   title: {
-    type: String,
-    index: true
+    type: String
   },
   content: {
     type: String
@@ -17,7 +15,9 @@ var ArticleSchema = new mongoose.Schema({
   }
 });
 
-var Article = mongoose.model('Item', ArticleSchema);
+var Article = mongoose.model('Article', ArticleSchema);
+
+
 /*
 module.exports = {
     Article: Article
