@@ -55,11 +55,8 @@ app.get("/api/articles/:name", async (req, res) => {
 })
 
 app.get("/api/articles", async (req, res) => {
-    console.log("----------")
-
     const articles = await Article.find()
-
-    res.send(articles)
+    res.json(articles)
 })
 
 app.use((req, res, next) => {
