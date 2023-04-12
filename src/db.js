@@ -1,14 +1,17 @@
 import { MongoClient } from 'mongodb'
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 let db;
 
 async function conectToDb(cb) {
-    const client = new MongoClient('mongodb://127.0.0.1:27017');
+    const client = new MongoClient(`mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.0sk1xrb.mongodb.net/?retryWrites=true&w=majority`);
     await client.connect();
 
-    db = client.db('react-blog-db');
-    await mongoose.connect('mongodb://127.0.0.1:27017/react-blog-db');
+    db = client.db('test');
+    await mongoose.connect(`mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.0sk1xrb.mongodb.net/?retryWrites=true&w=majority/react-blog-db`);
 
     cb();
 }
