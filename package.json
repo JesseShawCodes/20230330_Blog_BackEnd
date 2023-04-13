@@ -1,7 +1,7 @@
 {
   "name": "blog-app-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "\"Blog Back End\"",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "start": "node ./src/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jesse Shaw",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.3",
@@ -21,5 +21,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  }
+  },
+  "repository": "https://github.com/JesseShawCodes/20230330_Blog_BackEnd.git",
+  "private": false
 }
