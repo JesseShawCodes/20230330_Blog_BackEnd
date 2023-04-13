@@ -7,7 +7,10 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 import Article from './models/Article.js';
-console.log(process.env)
+console.log(process.env.client_email);
+console.log(process.env.client_id)
+console.log(process.env.private_key_id);
+console.log(process.env.private_key)
 const credentials = {
     "type": "service_account",
     "project_id": "my-blog-app-49f75",
@@ -19,7 +22,7 @@ const credentials = {
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-csmdo%40my-blog-app-49f75.iam.gserviceaccount.com"
-}
+  }
   
 
 admin.initializeApp({
