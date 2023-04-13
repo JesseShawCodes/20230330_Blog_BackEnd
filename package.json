@@ -5,20 +5,12 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./scr/server.js",
-    "start": "node /src/index.js",
-    "build": "node /src/server.js"
+    "start": "node index.js"
   },
-  "keywords": [],
-  "author": "Jesse Shaw",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.18.2"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
-  },
-  "repository": "https://github.com/JesseShawCodes/20230330_Blog_BackEnd.git",
-  "private": false
+  "engines": {
+    "node": ">=14"
+  }
 }
