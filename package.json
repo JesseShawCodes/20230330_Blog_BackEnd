@@ -4,11 +4,16 @@
   "description": "\"Blog Back End\"",
   "main": "src/server.js",
   "type": "module",
+  "license": "UNLICENSED",
   "scripts": {
     "start": "node src/index.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.6.0",
+    "mongodb": "^5.2.0",
+    "mongoose": "^7.0.3"
   },
   "engines": {
     "node": ">=14"
