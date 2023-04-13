@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./scr/server.js",
-    "start": "node ./src/index.js",
-    "build": "node ./src/server.js"
+    "start": "node /src/index.js",
+    "build": "node /src/server.js"
   },
   "keywords": [],
   "author": "Jesse Shaw",
