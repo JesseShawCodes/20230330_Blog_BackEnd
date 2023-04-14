@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "type": "module",
   "license": "UNLICENSED",
+  "author": "Jesse Shaw",
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
@@ -18,5 +19,8 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }
