@@ -1,4 +1,3 @@
-import fs from 'fs';
 import admin from 'firebase-admin';
 import express from "express";
 import { db, conectToDb } from './db.js';
@@ -7,10 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 import Article from './models/Article.js';
-console.log(process.env.client_email);
-console.log(process.env.client_id)
-console.log(process.env.private_key_id);
-console.log(process.env.private_key)
+
 const credentials = {
     "type": "service_account",
     "project_id": "my-blog-app-49f75",
