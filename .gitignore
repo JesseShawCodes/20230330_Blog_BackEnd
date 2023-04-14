@@ -25,3 +25,5 @@ yarn-error.log*
 /credentials.json
 
 mongo-db-data
+
+.env
