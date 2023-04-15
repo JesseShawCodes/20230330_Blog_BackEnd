@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import express from "express";
+import express, { response } from "express";
 import { db, conectToDb } from './db.js';
 import dotenv from 'dotenv';
 
@@ -125,6 +125,58 @@ app.post("/api/articles/:name/comments", async (req, res) => {
         res.send("That article does not exist")
     }
 })
+
+app.post("/api/music", async (req, res) => {
+    var response = await remotePost();
+    res.json(response)
+})
+
+const remotePost = async () => {
+    var details = {
+        'grant_type': 'client_credentials',
+        'client_id': process.env.spotify_client_id,
+        'client_secret': process.env.spotify_client_secret
+    };
+    
+    var formBody = [];
+    for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+    /*
+    let data = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formBody
+    })
+    */
+
+    // return "TESTING!"
+
+    return fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+            // 'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formBody
+    }).then((response) => { 
+        return response.json().then((data) => {
+            return data;
+        }).catch((err) => {
+            console.log(err);
+            return {
+                err: `${err}`
+            }
+        }) 
+    });
+
+}
+
 conectToDb(() => {
     console.log("Successfully connected to Database")
     app.listen(8000, () => {
