@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 import Article from './models/Article.js';
+import SpotifyAuth from './models/SpotifyAuth.js';
 
 const credentials = {
     "type": "service_account",
@@ -125,10 +126,24 @@ app.post("/api/articles/:name/comments", async (req, res) => {
         res.send("That article does not exist")
     }
 })
-
+/*
+{
+    "access_token": "BQAUe1PBtXlVAZ66tU-jqB6UeiNBGyo-oLta-ibV_2Oo-cNr-F_DsMSL9Yxx-4mvjhUicOfayVED71xHSadZ74JchbI0gFIfyelNP48QzBEn4cpGwUgU",
+    "token_type": "Bearer",
+    "expires_in": 3600
+}
+*/
 app.post("/api/music", async (req, res) => {
-    var response = await remotePost();
-    res.json(response)
+    console.log("POST")
+    // var response = await remotePost();
+    SpotifyAuth.updateOne({token_type: 'token_type'}, {
+        access_token: "TESG_saljflkasjflk",
+        token_type: "token_type",
+        expires_in: 3600,
+        created_date: Date.now()
+    })
+
+    res.json('Hi')
 })
 
 const remotePost = async () => {
