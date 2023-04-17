@@ -3,16 +3,20 @@ import mongoose from "mongoose";
 var SpotifyAuthSchema = new mongoose.Schema({
 
   access_token: {
-    type: String  
+    type: String,
+    required: true
 },
   token_type: {
-    type: String
+    type: String,
+    required: true
   },
   expires_in: {
-    type: Number
+    type: Number,
+    required: true
   },
   created_date: {
-    type: Date
+    type: Date,
+    required: true
   },
 });
 
