@@ -126,25 +126,29 @@ app.post("/api/articles/:name/comments", async (req, res) => {
         res.send("That article does not exist")
     }
 })
-/*
-{
-    "access_token": "BQAUe1PBtXlVAZ66tU-jqB6UeiNBGyo-oLta-ibV_2Oo-cNr-F_DsMSL9Yxx-4mvjhUicOfayVED71xHSadZ74JchbI0gFIfyelNP48QzBEn4cpGwUgU",
-    "token_type": "Bearer",
-    "expires_in": 3600
-}
-*/
-app.post("/api/music", async (req, res) => {
-    console.log("POST")
-    // var response = await remotePost();
-    SpotifyAuth.updateOne({token_type: 'token_type'}, {
-        access_token: "TESG_saljflkasjflk",
-        token_type: "token_type",
-        expires_in: 3600,
-        created_date: Date.now()
-    })
 
-    res.json('Hi')
+app.post("/api/music", async (req, res) => {
+    console.log(req.body)
+    /*
+    if !token_accpeted
+        updateAuth()
+    */
+    updateAuth()
+    res.json('test')
 })
+
+const updateAuth = async () => {
+    console.log("updateAuth")
+    const request = await remotePost()
+    console.log("-----------")
+    const filter = { token_type: "token_type" }
+    console.log("////////////")
+    const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
+
+    const result = await SpotifyAuth.findOneAndUpdate(filter, update);
+
+    return result;
+}
 
 const remotePost = async () => {
     var details = {
@@ -160,17 +164,6 @@ const remotePost = async () => {
         formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-    /*
-    let data = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: formBody
-    })
-    */
-
-    // return "TESTING!"
 
     return fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
