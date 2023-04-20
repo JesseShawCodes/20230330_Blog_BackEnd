@@ -128,18 +128,22 @@ app.post("/api/articles/:name/comments", async (req, res) => {
 })
 
 app.post("/api/music", async (req, res) => {
-    console.log(req.body)
     /*
     if !token_accpeted
         updateAuth()
     */
-    updateAuth()
-    res.json('test')
+    var result = await getSpotifyAuth()
+    console.log(result)
+    res.json(result)
+})
+
+app.get("/api/music/search", async (req, res) => {
+    console.log("SEARCH")
 })
 
 const updateAuth = async () => {
     console.log("updateAuth")
-    const request = await remotePost()
+    const request = await getSpotifyAuth()
     console.log("-----------")
     const filter = { token_type: "token_type" }
     console.log("////////////")
@@ -150,7 +154,26 @@ const updateAuth = async () => {
     return result;
 }
 
-const remotePost = async () => {
+const getArtistList = async (token, query, queryType) => {
+    console.log("getting artist list");
+    return fetch(`https://api.spotify.com/v1/search?query=${query}&type=${queryType}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }).then((response) => { 
+        return response.json().then((data) => {
+            return data;
+        }).catch((err) => {
+            console.log(err);
+            return {
+                err: `${err}`
+            }
+        }) 
+    });
+}
+
+const getSpotifyAuth = async () => {
     var details = {
         'grant_type': 'client_credentials',
         'client_id': process.env.spotify_client_id,
