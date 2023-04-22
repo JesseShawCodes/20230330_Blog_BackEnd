@@ -137,16 +137,40 @@ app.post("/api/music", async (req, res) => {
     res.json(result)
 })
 
-app.get("/api/music/search", async (req, res) => {
+app.get("/api/music/search/:name", async (req, res) => {
     console.log("SEARCH")
+    const data = await searchSpotify(req.params.name)
+    if (data.error) {
+        var newAuth = await updateAuth()
+        console.log("NEW AUTH")
+        console.log(newAuth)
+    }
+    res.json(data)
 })
 
+const searchSpotify = async (name) => {
+    var authToken = "BQA_Zr-rz3XzIECKvPFLgYRINkJ5JaKr7V0skVIM9gYvND_QxHhEKI8vw5RmHRRtNLT09dF8n9qA8YWOJU13etComEpTy8FVHchXJ6txpIFeWeMCOZV5"
+    var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    return fetch(`https://api.spotify.com/v1/search?query="${name}"&type=artist`, {
+        method: 'GET',
+        headers: {
+            "Authorization": `Bearer  ${auth[0].access_token}`
+        }
+    }).then((response) => { 
+        return response.json().then((data) => {
+            return data;
+        }).catch((err) => {
+            console.log(err);
+            return {
+                err: `${err}`
+            }
+        }) 
+    });
+}
+
 const updateAuth = async () => {
-    console.log("updateAuth")
     const request = await getSpotifyAuth()
-    console.log("-----------")
-    const filter = { token_type: "token_type" }
-    console.log("////////////")
+    const filter = { token_type: "Bearer" }
     const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
 
     const result = await SpotifyAuth.findOneAndUpdate(filter, update);
@@ -197,6 +221,7 @@ const getSpotifyAuth = async () => {
         body: formBody
     }).then((response) => { 
         return response.json().then((data) => {
+            console.log(data)
             return data;
         }).catch((err) => {
             console.log(err);
