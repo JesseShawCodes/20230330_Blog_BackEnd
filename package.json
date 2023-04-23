@@ -8,7 +8,8 @@
   "author": "Jesse Shaw",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "jest"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
@@ -21,6 +22,7 @@
     "node": ">=14"
   },
   "devDependencies": {
+    "jest": "^29.5.0",
     "nodemon": "^2.0.22"
   }
 }

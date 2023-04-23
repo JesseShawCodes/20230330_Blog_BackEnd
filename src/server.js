@@ -149,6 +149,7 @@ app.get("/api/music/search/:name", async (req, res) => {
 })
 
 const searchSpotify = async (name) => {
+    // Temp authToken
     var authToken = "BQA_Zr-rz3XzIECKvPFLgYRINkJ5JaKr7V0skVIM9gYvND_QxHhEKI8vw5RmHRRtNLT09dF8n9qA8YWOJU13etComEpTy8FVHchXJ6txpIFeWeMCOZV5"
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
     return fetch(`https://api.spotify.com/v1/search?query="${name}"&type=artist`, {
