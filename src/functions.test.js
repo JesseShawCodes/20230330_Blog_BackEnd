@@ -1,4 +1,8 @@
 const sum = require('./functions');
+const subtract = require('./functions');
+const fetchData = require('./functions');
+
+// import  { sum, subtract } from './functions'
 
 test('adds 1 + 2 to equal 3', () => {
   expect(sum(1, 2)).not.toBe(13);
@@ -76,4 +80,8 @@ test('compiling android goes as expected', () => {
   // Or you can match an exact error message using a regexp like below
   // expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK$/); // Test fails
   expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK!$/); // Test pass
+});
+
+test('subtract 5 - 2 to equal 3', () => {
+  expect(subtract(5, 2)).toBe(3);
 });
