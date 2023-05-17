@@ -1,6 +1,3 @@
-const sum = require('./functions');
-const subtract = require('./functions');
-const fetchData = require('./functions');
 
 // import  { sum, subtract } from './functions'
 
