@@ -34,7 +34,6 @@ app.use(express.json())
 app.use(async (req, res, next) => {
     const { authtoken } = req.headers;
 
-
     if (authtoken) {
         try {
             req.user = await admin.auth().verifyIdToken(authtoken);
@@ -42,10 +41,8 @@ app.use(async (req, res, next) => {
             return res.sendStatus(400)
         }
     }
-
     
-    req.user = req.user || {};
-    
+    req.user = req.user || {}; 
 
     next();
 })
@@ -146,6 +143,13 @@ app.get("/api/music/search/:name", async (req, res) => {
         console.log(newAuth)
     }
     res.json(data)
+})
+
+app.get("/api/music/auth", async (req, res) => {
+    var newAuth = await updateAuth()
+    console.log("NEW AUTH")
+    console.log(newAuth)    
+    res.json({test: 1})
 })
 
 const searchSpotify = async (name) => {
