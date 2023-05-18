@@ -124,6 +124,26 @@ app.post("/api/articles/:name/comments", async (req, res) => {
     }
 })
 
+
+const getArtistList = async (token, query, queryType) => {
+    console.log("getting artist list");
+    return fetch(`https://api.spotify.com/v1/search?query=${query}&type=${queryType}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }).then((response) => { 
+        return response.json().then((data) => {
+            return data;
+        }).catch((err) => {
+            console.log(err);
+            return {
+                err: `${err}`
+            }
+        }) 
+    });
+}
+
 app.post("/api/music", async (req, res) => {
     /*
     if !token_accpeted
@@ -134,6 +154,7 @@ app.post("/api/music", async (req, res) => {
     res.json(result)
 })
 
+/*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
     console.log("SEARCH")
     const data = await searchSpotify(req.params.name)
@@ -145,16 +166,47 @@ app.get("/api/music/search/:name", async (req, res) => {
     res.json(data)
 })
 
-app.get("/api/music/auth", async (req, res) => {
-    var newAuth = await updateAuth()
-    console.log("NEW AUTH")
-    console.log(newAuth)    
-    res.json({test: 1})
+/**/
+app.get("/api/music/search/top_tracks/:name", async (req, res) => {
+    console.log("Top Artist");
+    const data = await topTracksSpotify(req.params.name)
+    if (data.error) {
+        console.log("error")
+        updateAuth()
+        data = await topTracksSpotify(req.params.name)
+    }
+    res.json(data)
 })
 
+app.get("/api/music/auth", async (req, res) => {
+    // var newAuth = await updateAuth()
+    var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    console.log("NEW AUTH")
+    // console.log(newAuth)    
+    res.json({auth})
+})
+
+const topTracksSpotify = async (name) => {
+    // https://api.spotify.com/v1/artists/{id}/top-tracks
+    console.log("topTracksSpotify");
+    var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    return fetch(`https://api.spotify.com/v1/artists/0TnOYISbd1XYRBk9myaseg/top-tracks?market=US`, {
+        method: 'GET',
+        headers: {
+            "Authorization": `Bearer  ${auth[0].access_token}`
+        }
+    }).then((response) => { 
+        return response.json().then((data) => {
+            return data;
+        }).catch((err) => {
+            return {
+                err: `${err}`
+            }
+        }) 
+    });
+}
+
 const searchSpotify = async (name) => {
-    // Temp authToken
-    var authToken = "BQA_Zr-rz3XzIECKvPFLgYRINkJ5JaKr7V0skVIM9gYvND_QxHhEKI8vw5RmHRRtNLT09dF8n9qA8YWOJU13etComEpTy8FVHchXJ6txpIFeWeMCOZV5"
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
     return fetch(`https://api.spotify.com/v1/search?query="${name}"&type=artist`, {
         method: 'GET',
@@ -183,24 +235,6 @@ const updateAuth = async () => {
     return result;
 }
 
-const getArtistList = async (token, query, queryType) => {
-    console.log("getting artist list");
-    return fetch(`https://api.spotify.com/v1/search?query=${query}&type=${queryType}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    }).then((response) => { 
-        return response.json().then((data) => {
-            return data;
-        }).catch((err) => {
-            console.log(err);
-            return {
-                err: `${err}`
-            }
-        }) 
-    });
-}
 
 const getSpotifyAuth = async () => {
     var details = {
