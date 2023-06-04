@@ -124,7 +124,7 @@ app.post("/api/articles/:name/comments", async (req, res) => {
     }
 })
 
-
+/* Get Artist List. ID Is included in this function*/
 const getArtistList = async (token, query, queryType) => {
     console.log("getting artist list");
     return fetch(`https://api.spotify.com/v1/search?query=${query}&type=${queryType}`, {
@@ -166,14 +166,20 @@ app.get("/api/music/search/:name", async (req, res) => {
     res.json(data)
 })
 
-/**/
+/*
+
+
+How to get all songs from an artist
+*/
 app.get("/api/music/search/top_tracks/:name", async (req, res) => {
     console.log("Top Artist");
-    const data = await topTracksSpotify(req.params.name)
+    let artistCode = await searchSpotify(req.params.name)
+    console.log(artistCode.artists.items[0].id)
+    let data = await topTracksSpotify(artistCode.artists.items[0].id)
     if (data.error) {
         console.log("error")
         updateAuth()
-        data = await topTracksSpotify(req.params.name)
+        data = await topTracksSpotify(artistCode)
     }
     res.json(data)
 })
@@ -190,7 +196,7 @@ const topTracksSpotify = async (name) => {
     // https://api.spotify.com/v1/artists/{id}/top-tracks
     console.log("topTracksSpotify");
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
-    return fetch(`https://api.spotify.com/v1/artists/0TnOYISbd1XYRBk9myaseg/top-tracks?market=US`, {
+    return fetch(`https://api.spotify.com/v1/artists/${name}/top-tracks?market=US`, {
         method: 'GET',
         headers: {
             "Authorization": `Bearer  ${auth[0].access_token}`
@@ -225,6 +231,12 @@ const searchSpotify = async (name) => {
     });
 }
 
+const getSpotifyAristCode = async (name) => {
+    console.log("get Spotify Artist Code");
+    return "1qiwaJwjKod5WhcYZ76O1B"
+}
+
+/* Auth Functions */
 const updateAuth = async () => {
     const request = await getSpotifyAuth()
     const filter = { token_type: "Bearer" }
@@ -234,7 +246,6 @@ const updateAuth = async () => {
 
     return result;
 }
-
 
 const getSpotifyAuth = async () => {
     var details = {
