@@ -166,10 +166,35 @@ app.get("/api/music/search/:name", async (req, res) => {
     res.json(data)
 })
 
+app.get("/api/music/search/albums_by_artist/:name", async (req, res) => {
+    let artistCode = await searchSpotify(req.params.name)
+    let albumsList = await getAlbumsByArtist(artistCode.artists.items[0].id)
+    res.json({data: albumsList})
+})
+
+const getAlbumsByArtist = async (name) => {
+    var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    return fetch(`https://api.spotify.com/v1/artists/${name}/albums`, {
+        method: 'GET',
+        headers: {
+            "Authorization": `Bearer  ${auth[0].access_token}`
+        }
+    }).then((response) => { 
+        return response.json().then((data) => {
+            return data;
+        }).catch((err) => {
+            return {
+                err: `${err}`
+            }
+        }) 
+    });
+}
+
 /*
 
 
 How to get all songs from an artist
+https://stackoverflow.com/questions/40020946/how-to-get-all-songs-of-an-artist-on-spoitfy
 */
 app.get("/api/music/search/top_tracks/:name", async (req, res) => {
     console.log("Top Artist");
@@ -229,11 +254,6 @@ const searchSpotify = async (name) => {
             }
         }) 
     });
-}
-
-const getSpotifyAristCode = async (name) => {
-    console.log("get Spotify Artist Code");
-    return "1qiwaJwjKod5WhcYZ76O1B"
 }
 
 /* Auth Functions */
