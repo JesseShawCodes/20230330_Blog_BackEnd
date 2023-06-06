@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import express, { response } from "express";
+import express, { query, response } from "express";
 import { db, conectToDb } from './db.js';
 import dotenv from 'dotenv';
 
@@ -25,6 +25,12 @@ const credentials = {
 admin.initializeApp({
     credential: admin.credential.cert(credentials),
 })
+
+/*
+/api/music/search/:name
+
+
+*/
 
 const app = express();
 
@@ -145,10 +151,6 @@ const getArtistList = async (token, query, queryType) => {
 }
 
 app.post("/api/music", async (req, res) => {
-    /*
-    if !token_accpeted
-        updateAuth()
-    */
     var result = await getSpotifyAuth()
     console.log(result)
     res.json(result)
@@ -157,42 +159,56 @@ app.post("/api/music", async (req, res) => {
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
     console.log("SEARCH")
-    const data = await searchSpotify(req.params.name)
+    var data = await searchSpotify(req.params.name)
     if (data.error) {
-        var newAuth = await updateAuth()
-        console.log("NEW AUTH")
-        console.log(newAuth)
+        updateAuth()
+        data = await searchSpotify(req.params.name)
     }
     res.json(data)
 })
 
 app.get("/api/music/search/albums_by_artist/:name", async (req, res) => {
-    let artistCode = await searchSpotify(req.params.name)
-    let albumsList = await getAlbumsByArtist(artistCode.artists.items[0].id)
+    var artistCode = await searchSpotify(req.params.name)
+    if (artistCode.error) {
+        var newAuth = await updateAuth()
+        artistCode = await searchSpotify(req.params.name)
+    }
+    
+    let artistId = artistCode.artists.items[0].id
+    let albumsList = await getAlbumsByArtist(artistId)
+    
     res.json({data: albumsList})
 })
 
 const getAlbumsByArtist = async (name) => {
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
-    return fetch(`https://api.spotify.com/v1/artists/${name}/albums`, {
-        method: 'GET',
+    var data = await spotifyApiRequest(`https://api.spotify.com/v1/artists/${name}/albums`, auth[0].access_token, 'GET')
+    console.log(data);
+    return data
+}
+
+/*
+Single Function meant to handle all requests to spotify API
+*/
+const spotifyApiRequest = async (path, auth, method) => {
+    console.log("spotifyApiRequest");
+    return fetch(path, {
+        method: method,
         headers: {
-            "Authorization": `Bearer  ${auth[0].access_token}`
+            "Authorization": `Bearer ${auth}`
         }
-    }).then((response) => { 
+    }).then((response) => {
         return response.json().then((data) => {
             return data;
         }).catch((err) => {
             return {
                 err: `${err}`
             }
-        }) 
-    });
+        })
+    })
 }
 
 /*
-
-
 How to get all songs from an artist
 https://stackoverflow.com/questions/40020946/how-to-get-all-songs-of-an-artist-on-spoitfy
 */
@@ -210,10 +226,7 @@ app.get("/api/music/search/top_tracks/:name", async (req, res) => {
 })
 
 app.get("/api/music/auth", async (req, res) => {
-    // var newAuth = await updateAuth()
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
-    console.log("NEW AUTH")
-    // console.log(newAuth)    
     res.json({auth})
 })
 
@@ -291,10 +304,8 @@ const getSpotifyAuth = async () => {
         body: formBody
     }).then((response) => { 
         return response.json().then((data) => {
-            console.log(data)
             return data;
         }).catch((err) => {
-            console.log(err);
             return {
                 err: `${err}`
             }
