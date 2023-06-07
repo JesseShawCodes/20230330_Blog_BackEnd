@@ -132,7 +132,6 @@ app.post("/api/articles/:name/comments", async (req, res) => {
 
 /* Get Artist List. ID Is included in this function*/
 const getArtistList = async (token, query, queryType) => {
-    console.log("getting artist list");
     return fetch(`https://api.spotify.com/v1/search?query=${query}&type=${queryType}`, {
         method: 'GET',
         headers: {
@@ -142,7 +141,6 @@ const getArtistList = async (token, query, queryType) => {
         return response.json().then((data) => {
             return data;
         }).catch((err) => {
-            console.log(err);
             return {
                 err: `${err}`
             }
@@ -152,7 +150,6 @@ const getArtistList = async (token, query, queryType) => {
 
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
-    console.log("SEARCH")
     var data = await searchSpotify(req.params.name)
     if (data.error) {
         updateAuth()
@@ -177,7 +174,6 @@ app.get("/api/music/search/albums_by_artist/:name", async (req, res) => {
 const getAlbumsByArtist = async (name) => {
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
     var data = await spotifyApiRequest(`https://api.spotify.com/v1/artists/${name}/albums`, auth[0].access_token, 'GET')
-    console.log(data);
     return data
 }
 
@@ -185,7 +181,6 @@ const getAlbumsByArtist = async (name) => {
 Single Function meant to handle all requests to spotify API
 */
 const spotifyApiRequest = async (path, auth, method) => {
-    console.log("spotifyApiRequest");
     return fetch(path, {
         method: method,
         headers: {
@@ -207,12 +202,9 @@ How to get all songs from an artist
 https://stackoverflow.com/questions/40020946/how-to-get-all-songs-of-an-artist-on-spoitfy
 */
 app.get("/api/music/search/top_tracks/:name", async (req, res) => {
-    console.log("Top Artist");
     let artistCode = await searchSpotify(req.params.name)
-    console.log(artistCode.artists.items[0].id)
     let data = await topTracksSpotify(artistCode.artists.items[0].id)
     if (data.error) {
-        console.log("error")
         updateAuth()
         data = await topTracksSpotify(artistCode)
     }
@@ -226,7 +218,6 @@ app.get("/api/music/auth", async (req, res) => {
 
 const topTracksSpotify = async (name) => {
     // https://api.spotify.com/v1/artists/{id}/top-tracks
-    console.log("topTracksSpotify");
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
     return fetch(`https://api.spotify.com/v1/artists/${name}/top-tracks?market=US`, {
         method: 'GET',
@@ -255,7 +246,6 @@ const searchSpotify = async (name) => {
         return response.json().then((data) => {
             return data;
         }).catch((err) => {
-            console.log(err);
             return {
                 err: `${err}`
             }
