@@ -150,12 +150,6 @@ const getArtistList = async (token, query, queryType) => {
     });
 }
 
-app.post("/api/music", async (req, res) => {
-    var result = await getSpotifyAuth()
-    console.log(result)
-    res.json(result)
-})
-
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
     console.log("SEARCH")
@@ -271,7 +265,7 @@ const searchSpotify = async (name) => {
 
 /* Auth Functions */
 const updateAuth = async () => {
-    const request = await getSpotifyAuth()
+    const request = await getSpotifyAuthFromApi()
     const filter = { token_type: "Bearer" }
     const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
 
@@ -280,7 +274,7 @@ const updateAuth = async () => {
     return result;
 }
 
-const getSpotifyAuth = async () => {
+const getSpotifyAuthFromApi = async () => {
     var details = {
         'grant_type': 'client_credentials',
         'client_id': process.env.spotify_client_id,
