@@ -213,6 +213,10 @@ app.get("/api/music/search/top_tracks/:name", async (req, res) => {
 
 app.get("/api/music/auth", async (req, res) => {
     var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    if (auth.length == 0) {
+        createAuth();
+        var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    }
     res.json({auth})
 })
 
@@ -261,6 +265,19 @@ const updateAuth = async () => {
 
     const result = await SpotifyAuth.findOneAndUpdate(filter, update);
 
+    return result;
+}
+
+const createAuth = async () => {
+    const request = await getSpotifyAuthFromApi();
+    const filter = { token_type: "Bearer" }
+    const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
+    const result = await SpotifyAuth.create({
+        access_token: request.access_token,
+        token_type: request.token_type,
+        expires_in: request.expires_in,
+        created_date: Date.now()
+    });
     return result;
 }
 
