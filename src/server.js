@@ -315,8 +315,18 @@ const getSpotifyAuthFromApi = async () => {
 
 }
 
+
+const authUpdate = () => {
+    console.log(`Update Auth ${Date.now()}`)
+    updateAuth()
+}
+
 conectToDb(() => {
     console.log("Successfully connected to Database")
+    // updateAuth on server initial start
+    updateAuth()
+    // Run an updateAuth every hour
+    setInterval(authUpdate, 3600000)
     app.listen(8000, () => {
         console.log("Server is listening on port 8000");
     })
