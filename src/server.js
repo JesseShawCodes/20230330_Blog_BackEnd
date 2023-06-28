@@ -2,6 +2,7 @@ import admin from 'firebase-admin';
 import express, { query, response } from "express";
 import { db, conectToDb } from './db.js';
 import dotenv from 'dotenv';
+import cors from 'cors'
 
 dotenv.config()
 
@@ -36,7 +37,9 @@ const app = express();
 
 // Middleware
 app.use(express.json())
-
+app.use(cors({
+    origin: '*'
+}));
 app.use(async (req, res, next) => {
     const { authtoken } = req.headers;
 
@@ -150,6 +153,8 @@ const getArtistList = async (token, query, queryType) => {
 
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
+    console.log("REQUEST!!")
+    console.log(req.params)
     var data = await searchSpotify(req.params.name)
     if (data.error) {
         updateAuth()
@@ -259,6 +264,7 @@ const searchSpotify = async (name) => {
 
 /* Auth Functions */
 const updateAuth = async () => {
+    console.log("AUTH IS UPDATED")
     const request = await getSpotifyAuthFromApi()
     const filter = { token_type: "Bearer" }
     const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
