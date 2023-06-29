@@ -153,8 +153,6 @@ const getArtistList = async (token, query, queryType) => {
 
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
-    console.log("REQUEST!!")
-    console.log(req.params)
     var data = await searchSpotify(req.params.name)
     if (data.error) {
         updateAuth()
@@ -206,12 +204,12 @@ const spotifyApiRequest = async (path, auth, method) => {
 How to get all songs from an artist
 https://stackoverflow.com/questions/40020946/how-to-get-all-songs-of-an-artist-on-spoitfy
 */
-app.get("/api/music/search/top_tracks/:name", async (req, res) => {
+app.get("/api/music/search/top_tracks/:id", async (req, res) => {
     let artistCode = await searchSpotify(req.params.name)
-    let data = await topTracksSpotify(artistCode.artists.items[0].id)
+    let data = await topTracksSpotify(req.params.id)
     if (data.error) {
         updateAuth()
-        data = await topTracksSpotify(artistCode)
+        data = await topTracksSpotify(req.params.id)
     }
     res.json(data)
 })
