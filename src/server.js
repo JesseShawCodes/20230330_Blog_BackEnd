@@ -8,6 +8,7 @@ dotenv.config()
 
 import Article from './models/Article.js';
 import SpotifyAuth from './models/SpotifyAuth.js';
+import AppLog from './models/AppLogs.js';
 
 const credentials = {
     "type": "service_account",
@@ -151,6 +152,18 @@ const getArtistList = async (token, query, queryType) => {
     });
 }
 
+app.get("/api/music/search/artist/:id", async (req,res) => {
+    var data = await getArtist(req.params.id)
+    console.log(data)
+    res.json({data: data})
+})
+
+const getArtist = async (id) => {
+    var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    var data = await spotifyApiRequest(`https://api.spotify.com/v1/artists/${id}`, auth[0].access_token, 'GET')
+    return data
+}
+
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
     var data = await searchSpotify(req.params.name)
@@ -268,7 +281,11 @@ const updateAuth = async () => {
     const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
 
     const result = await SpotifyAuth.findOneAndUpdate(filter, update);
-
+    AppLog.create({
+        log: result,
+        message: "Auth updated",
+        created_date: Date.now()
+    })
     return result;
 }
 
@@ -326,6 +343,10 @@ conectToDb(() => {
     // Run an updateAuth every hour
     setInterval(updateAuth, 3600000)
     app.listen(8000, () => {
+        AppLog.create({
+            message: `Server Started at ${Date.now()}`,
+            created_date: Date.now()
+        })
         console.log("Server is listening on port 8000");
     })
 });
