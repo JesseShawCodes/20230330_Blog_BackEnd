@@ -86,8 +86,12 @@ const getArtistList = async (token, query, queryType) => {
 
 app.get("/api/music/search/artist/:id", async (req,res) => {
     var data = await getArtist(req.params.id)
+    var topTracks = await getTopTracks(req.params.id);
     console.log(data)
-    res.json({data: data})
+    res.json({
+        artist: data,
+        tracks: topTracks
+    })
 })
 
 const getArtist = async (id) => {
@@ -96,6 +100,12 @@ const getArtist = async (id) => {
     return data
 }
 
+const getTopTracks = async (id) => {
+    var auth = await SpotifyAuth.find({token_type: "Bearer"})
+    // https://api.spotify.com/v1/artists/{id}/top-tracks
+    var data = await spotifyApiRequest(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=US`, auth[0].access_token, 'GET')
+    return data
+}
 /*Search Artist*/
 app.get("/api/music/search/:name", async (req, res) => {
     var data = await searchSpotify(req.params.name)
