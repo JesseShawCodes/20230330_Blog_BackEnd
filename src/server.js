@@ -6,7 +6,6 @@ import cors from 'cors'
 
 dotenv.config()
 
-import Article from './models/Article.js';
 import SpotifyAuth from './models/SpotifyAuth.js';
 import AppLog from './models/AppLogs.js';
 
