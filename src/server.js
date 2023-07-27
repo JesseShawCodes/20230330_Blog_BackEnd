@@ -65,6 +65,11 @@ app.use((req, res, next) => {
     }
 });
 
+
+/*Error Handling*/
+SpotifyAuth.events.on('error', err => console.log(err.message))
+AppLog.events.on('error', err => console.log(err.message))
+
 /* Get Artist List. ID Is included in this function*/
 const getArtistList = async (token, query, queryType) => {
     return fetch(`https://api.spotify.com/v1/search?query=${query}&type=${queryType}`, {
@@ -216,7 +221,6 @@ const searchSpotify = async (name) => {
 
 /* Auth Functions */
 const updateAuth = async () => {
-    console.log("AUTH IS UPDATED")
     const request = await getSpotifyAuthFromApi()
     const filter = { token_type: "Bearer" }
     const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
@@ -227,6 +231,7 @@ const updateAuth = async () => {
         message: "Auth updated",
         created_date: Date.now()
     })
+    console.log("AUTH IS UPDATED")
     return result;
 }
 
