@@ -226,11 +226,7 @@ const updateAuth = async () => {
     const update = { access_token: request.access_token, token_type: request.token_type, created_date: Date.now() }
 
     const result = await SpotifyAuth.findOneAndUpdate(filter, update);
-    AppLog.create({
-        log: result,
-        message: "Auth updated",
-        created_date: Date.now()
-    })
+    appLogCreate(result, "Auth updated", Date.now())
     console.log("AUTH IS UPDATED")
     return result;
 }
@@ -245,11 +241,7 @@ const createAuth = async () => {
         expires_in: request.expires_in,
         created_date: Date.now()
     });
-    AppLog.create({
-        log: result,
-        message: "Auth Created",
-        created_date: Date.now()
-    })    
+    appLogCreate(result, "Auth Created - New Function", Date.now())
     return result;
 }
 
@@ -291,6 +283,14 @@ const authConnection = async () => {
     authCount > 0 ? updateAuth() : createAuth()
 }
 
+const appLogCreate = (log, message, created_date) => {
+    AppLog.create({
+        log: log,
+        message: message,
+        created_date: created_date
+    })
+}
+
 conectToDb(() => {
     console.log("Successfully connected to Database")
 
@@ -298,10 +298,7 @@ conectToDb(() => {
     // Run an updateAuth every hour
     setInterval(updateAuth, 3600000)
     app.listen(8000, () => {
-        AppLog.create({
-            message: `Server Started at ${Date.now()}`,
-            created_date: Date.now()
-        })
+        appLogCreate(null, `Server Started at ${Date.now()} - new function`, Date.now())
         console.log("Server is listening on port 8000");
     })
 });
