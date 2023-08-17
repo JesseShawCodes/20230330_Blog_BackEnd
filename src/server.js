@@ -245,6 +245,11 @@ const createAuth = async () => {
         expires_in: request.expires_in,
         created_date: Date.now()
     });
+    AppLog.create({
+        log: result,
+        message: "Auth Created",
+        created_date: Date.now()
+    })    
     return result;
 }
 
@@ -281,10 +286,15 @@ const getSpotifyAuthFromApi = async () => {
 
 }
 
+const authConnection = async () => {
+    var authCount = await SpotifyAuth.find({}).countDocuments({})
+    authCount > 0 ? updateAuth() : createAuth()
+}
+
 conectToDb(() => {
     console.log("Successfully connected to Database")
-    // updateAuth on server initial start
-    updateAuth()
+
+    authConnection()
     // Run an updateAuth every hour
     setInterval(updateAuth, 3600000)
     app.listen(8000, () => {
